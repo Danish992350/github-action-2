@@ -15,7 +15,7 @@ jobs:
           npm run build --if-present
           npm test
       - name: Upload test report
-        if: steps.run-tests.outcome == 'failure'  # if previous step fail then only it will run
+        if: failure() && steps.run-tests.outcome == 'failure'  # if previous step fail then only it will run
         uses: actions/upload-artifact@v3
         with:
           name: dist-without-markdown
