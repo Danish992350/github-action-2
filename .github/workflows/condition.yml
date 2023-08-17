@@ -28,7 +28,8 @@ jobs:
           name: code-coverage-report
           path: output/test/code-coverage.html
   report: 
-    if: failure()  # if previous one of step fail then only it will run
+    needs: [build_and_test]
+    if: failure()  # if previous one of step fail then only it will run 
     runs-on: ubuntu-latest
     steps:
       - name: Output information
