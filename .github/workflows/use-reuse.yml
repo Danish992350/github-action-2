@@ -38,4 +38,5 @@ jobs:
           echo "${{ github}}"       
 
   deploy:
+    needs: report  #here reusable.yml workflow will be reuse here
     uses: ./.github/workflows/reusable.yml  
