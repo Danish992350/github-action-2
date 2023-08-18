@@ -1,5 +1,41 @@
-name: use-reuseble workflow
-on: push
+name: use reusable workflow
+
+on: [push]
+
 jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: npm install, build, and test
+        id: run-tests     # we create id for ref for nxt step in IF condition
+        run: |
+          npm install
+          npm run build --if-present
+          npm test
+      - name: Upload test report
+        continue-on-error: true    # for thes step will run even previous step fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-without-markdown
+          path: |
+            dist
+            !dist/**/*.md
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: output/test/code-coverage.html
+  report: 
+    needs: [build_and_test]
+    if: failure()  # if previous one of step fail then only it will run 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run:
+          echo "Something went wrong"
+          echo "${{ github}}"       
+
   deploy:
     uses: ./.github/workflows/reusable.yml  
